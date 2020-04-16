@@ -10,7 +10,7 @@ if (!String.prototype.startsWith) {
 
 var theater = {
 
-	VERSION: "3.0.4-YukiTheater",
+	VERSION: "3.1.0-YukiTheater",
 
 	playerContainer: null,
 	playerContent: null,
@@ -187,7 +187,7 @@ var theater = {
 
 	playerLoadFailure: function() {
 		this.resetPlayer();
-		this.getPlayerContainer().innerHTML = "<div id='player'><div style='color: red;'>ERROR: Failed to load video player." + (clientHasFlash ? "" : "<br />This is probably because you are missing Abobe Flash Player.<br />Say /flash for instructions on how to fix this.") + "</div></div>";
+		this.getPlayerContainer().innerHTML = "<div id='player'><div style='color: red; font-size: 32px;'>ERROR: Failed to load video player.<br /><br />This is probably because you aren't on the x86-64 branch or you're missing GModCEFCodecFix.<br /><br />Say /fixvideos for instructions on how to fix this.</div></div>";
 	}
 };
 
@@ -302,7 +302,8 @@ function registerPlayer( type, object ) {
 					cc_load_policy: theater.isCCEnabled() ? 1 : 0
 				},
 				events: {
-					onReady: onYouTubePlayerReady
+					onReady: onYouTubePlayerReady,
+					onError: onYouTubePlayerError
 				}
 			});
 		};
@@ -560,133 +561,137 @@ function registerPlayer( type, object ) {
 	registerPlayer( "vimeo", VimeoVideo );
 
 	var TwitchVideo = function() {
-		/*
-			Embed Player Object
-		*/
-		var player = new Twitch.Player("player", {
-			height: "100%",
-			width: "100%"
-		});
+		if (document.createElement("video").canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') == "probably") {
+			/*
+				Embed Player Object
+			*/
+			var player = new Twitch.Player("player", {
+				height: "100%",
+				width: "100%"
+			});
 
-		/*
-			Standard Player Methods
-		*/
-		this.setVideo = function( id ) {
-			this.lastStartTime = null;
-			this.lastVideoId = null;
-			this.videoId = id;
-		};
+			/*
+				Standard Player Methods
+			*/
+			this.setVideo = function( id ) {
+				this.lastStartTime = null;
+				this.lastVideoId = null;
+				this.videoId = id;
+			};
 
-		this.setVolume = function( volume ) {
-			this.lastVolume = null;
-			this.volume = volume;
-		};
+			this.setVolume = function( volume ) {
+				this.lastVolume = null;
+				this.volume = volume;
+			};
 
-		this.setStartTime = function( seconds ) {
-			this.lastStartTime = null;
-			this.startTime = seconds;
-		};
+			this.setStartTime = function( seconds ) {
+				this.lastStartTime = null;
+				this.startTime = seconds;
+			};
 
-		this.seek = function( seconds ) {
-			if ( this.player !== null ) {
-				this.player.seek( seconds );
-			}
-		};
+			this.seek = function( seconds ) {
+				if ( this.player !== null ) {
+					this.player.seek( seconds );
+				}
+			};
 
-		this.onRemove = function() {
-			clearInterval( this.interval );
-		};
+			this.onRemove = function() {
+				clearInterval( this.interval );
+			};
 
-		// Player Specific Methods
-		this.getCurrentTime = function() {
-			if ( this.player !== null ) {
-				return this.player.getCurrentTime();
-			}
-		};
+			// Player Specific Methods
+			this.getCurrentTime = function() {
+				if ( this.player !== null ) {
+					return this.player.getCurrentTime();
+				}
+			};
 
-		this.think = function() {
+			this.think = function() {
 
-			if ( this.player !== null ) {
+				if ( this.player !== null ) {
 
-				if ( theater.isForceVideoRes() ) {
-					if ( this.lastWindowHeight != window.innerHeight ) {
-						var twitchRes = "chunked";
+					if ( theater.isForceVideoRes() ) {
+						if ( this.lastWindowHeight != window.innerHeight ) {
+							var twitchRes = "chunked";
 
-						if ( window.innerHeight <= 1536 && window.innerHeight > 1440 ) {
-							twitchRes = "chunked";
+							if ( window.innerHeight <= 1536 && window.innerHeight > 1440 ) {
+								twitchRes = "chunked";
+							}
+							if ( window.innerHeight <= 1440 && window.innerHeight > 1080 ) {
+								twitchRes = "chunked";
+							}
+							if ( window.innerHeight <= 1080 && window.innerHeight > 720 ) {
+								twitchRes = "chunked";
+							}
+							if ( window.innerHeight <= 720 && window.innerHeight > 480 ) {
+								twitchRes = "high";
+							}
+							if ( window.innerHeight <= 480 && window.innerHeight > 360 ) {
+								twitchRes = "medium";
+							}
+							if ( window.innerHeight <= 360 && window.innerHeight > 240 ) {
+								twitchRes = "low";
+							}
+							if ( window.innerHeight <= 240 ) {
+								twitchRes = "low";
+							}
+
+							this.player.setQuality(twitchRes);
+							console.log("Forcing Quality Change to " + twitchRes);
+
+							this.lastWindowHeight = window.innerHeight;
 						}
-						if ( window.innerHeight <= 1440 && window.innerHeight > 1080 ) {
-							twitchRes = "chunked";
-						}
-						if ( window.innerHeight <= 1080 && window.innerHeight > 720 ) {
-							twitchRes = "chunked";
-						}
-						if ( window.innerHeight <= 720 && window.innerHeight > 480 ) {
-							twitchRes = "high";
-						}
-						if ( window.innerHeight <= 480 && window.innerHeight > 360 ) {
-							twitchRes = "medium";
-						}
-						if ( window.innerHeight <= 360 && window.innerHeight > 240 ) {
-							twitchRes = "low";
-						}
-						if ( window.innerHeight <= 240 ) {
-							twitchRes = "low";
+					}
+
+					if ( this.videoId != this.lastVideoId ) {
+						if (this.videoId.startsWith("vod,")) {
+							this.player.setVideo("v" + this.videoId.split(",")[1]);
+						} else {
+							this.player.setChannel( this.videoId );
 						}
 
-						this.player.setQuality(twitchRes);
-						console.log("Forcing Quality Change to " + twitchRes);
+						this.lastVideoId = this.videoId;
+						this.lastStartTime = this.startTime;
 
-						this.lastWindowHeight = window.innerHeight;
+						// Apparently you have to do this for it to play reliably
+						var self = this;
+						setTimeout(function() {
+							self.player.pause();
+							self.player.play();
+
+							self.player.setVolume( (this.volume != null ? this.volume : theater.volume != null ? theater.volume : 25) / 100 );
+							self.player.setMuted( (this.volume != null ? this.volume : theater.volume != null ? theater.volume : 25) == 0 );
+						}, 5000)
+					}
+
+					if ( this.volume != this.lastVolume ) {
+						this.player.setVolume( this.volume / 100 );
+						this.player.setMuted( this.volume == 0 );
+						this.lastVolume = this.volume;
+					}
+
+					if ( this.startTime != this.lastStartTime ) {
+						this.seek( this.startTime );
+						this.lastStartTime = this.startTime;
+					}
+
+					if (this.player.getCurrentTime() == undefined) {
+						theater.playerLoadFailure();
 					}
 				}
 
-				if ( this.videoId != this.lastVideoId ) {
-					if (this.videoId.startsWith("vod,")) {
-						this.player.setVideo("v" + this.videoId.split(",")[1]);
-					} else {
-						this.player.setChannel( this.videoId );
-					}
+			};
 
-					this.lastVideoId = this.videoId;
-					this.lastStartTime = this.startTime;
+			this.onReady = function() {
+				this.player = player;
+				this.interval = setInterval( this.think.bind(this), 100 );
+			};
 
-					// Apparently you have to do this for it to play reliably
-					var self = this;
-					setTimeout(function() {
-						self.player.pause();
-						self.player.play();
-
-						self.player.setVolume( (this.volume != null ? this.volume : theater.volume != null ? theater.volume : 25) / 100 );
-						self.player.setMuted( (this.volume != null ? this.volume : theater.volume != null ? theater.volume : 25) == 0 );
-					}, 5000)
-				}
-
-				if ( this.volume != this.lastVolume ) {
-					this.player.setVolume( this.volume / 100 );
-					this.player.setMuted( this.volume == 0 );
-					this.lastVolume = this.volume;
-				}
-
-				if ( this.startTime != this.lastStartTime ) {
-					this.seek( this.startTime );
-					this.lastStartTime = this.startTime;
-				}
-
-				if (this.player.getCurrentTime() == undefined) {
-					theater.playerLoadFailure();
-				}
-			}
-
-		};
-
-		this.onReady = function() {
-			this.player = player;
-			this.interval = setInterval( this.think.bind(this), 100 );
-		};
-
-		//player.addEventListener("Twitch.Player.READY", this.onReady);
-		this.onReady();
+			//player.addEventListener("Twitch.Player.READY", this.onReady);
+			this.onReady();
+		} else {
+			theater.playerLoadFailure();
+		}
 	};
 	registerPlayer( "twitch", TwitchVideo );
 	registerPlayer( "twitchstream", TwitchVideo );
@@ -983,67 +988,7 @@ function registerPlayer( type, object ) {
 				//theater.playerLoadFailure();
 			});
 		} else {
-			// Does not support MP4, for HLS
-			videojs.options.flash.swf = "video-js-5.9.2/video-js.swf"
-
-			pre_player.className = "video-js vjs-default-skin";
-			pre_player.preload = "auto";
-			pre_player.autoplay = "true";
-			var player_container = document.getElementById('player').parentNode;
-			player_container.removeChild(document.getElementById('player'));
-			player_container.appendChild(pre_player);
-
-			var viewer = videojs('player');
-			viewer.poster("https://winterphoenix96.github.io/rtmp-thumbnails/default.png");
-
-			/*
-				Player Specific Methods
-			*/
-			this.think = function() {
-
-				if ( this.player != null ) {
-					if ( this.videoId != this.lastVideoId ) {
-						this.player.src({ type: "rtmp/mp4", src: "rtmp://rtmp.yukitheater.org/show/" + this.videoId + "_src"});
-						this.lastVideoId = this.videoId;
-						this.lastSrcChange = Math.round(Date.now()/1000) + 5; // Wait 5 seconds and then try again if it isn't working
-					}
-
-					/*
-					if (this.lastSrcChange != undefined) {
-						var curTime = Math.round(Date.now()/1000)
-						if (curTime >= this.lastSrcChange && this.player.readyState() === 0) {
-							console.log("Attempt to load RTMP Stream Failed! Retrying...");
-							this.player.src({ type: "rtmp/mp4", src: "rtmp://rtmp.yukitheater.org/show/" + this.videoId + "_src"});
-							this.lastSrcChange = Math.round(Date.now()/1000) + 5;
-						}
-					}
-					*/
-
-					if ( this.volume != this.lastVolume ) {
-						this.player.volume( this.volume );
-						this.lastVolume = this.volume;
-					}
-				}
-			};
-
-			this.onReady = function() {
-				this.player = viewer;
-
-				var self = this;
-				this.interval = setInterval( function() { self.think(self); }, 100 );
-			};
-
-			this.toggleControls = function( enabled ) {
-				this.player.controls(enabled);
-			};
-
-			var self = this;
-			viewer.ready(function(){self.onReady();});
-			viewer.on("error", function(event) {
-				if (viewer.error().code == 4) { // MEDIA_ERR_SRC_NOT_SUPPORTED
-					theater.playerLoadFailure();
-				}
-			});
+			theater.playerLoadFailure();
 		}
 	};
 	registerPlayer( "yukirtmp", YukiTheaterRTMP );
@@ -1061,7 +1006,7 @@ function registerPlayer( type, object ) {
 			width: "100%",
 			controls: false,
 			autostart: true,
-			primary: document.createElement("video").canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') == "probably" ? "html5" : "flash",
+			primary: "html5",
 			displaytitle: true,
 			file: "example.mp4"
 		});
@@ -1236,7 +1181,7 @@ function registerPlayer( type, object ) {
 			width: "100%",
 			controls: false,
 			autostart: true,
-			primary: document.createElement("video").canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"') == "probably" ? "html5" : "flash",
+			primary: "html5",
 			displaytitle: true,
 			file: "example.mp4"
 		});
@@ -1412,8 +1357,16 @@ function registerPlayer( type, object ) {
 function onYouTubePlayerReady( playerId ) {
 	var player = theater.getPlayer(),
 		type = player && player.getType();
-	if ( player && ((type == "youtube") || (type == "youtubelive") || (type == "kissyoutube") || (type == "moetube")) ) {
+	if ( player && ((type == "youtube") || (type == "youtubelive")) ) {
 		player.onReady();
+	}
+}
+
+function onYouTubePlayerError(event) {
+	var player = theater.getPlayer(),
+		type = player && player.getType();
+	if ( player && ((type == "youtube") || (type == "youtubelive")) && event.data == 5) { // Code 5 = HTML5 Player Error
+		theater.playerLoadFailure();
 	}
 }
 
