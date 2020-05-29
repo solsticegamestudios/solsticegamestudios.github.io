@@ -10,7 +10,7 @@ if (!String.prototype.startsWith) {
 
 var theater = {
 
-	VERSION: "3.1.0-YukiTheater",
+	VERSION: "3.1.1-YukiTheater",
 
 	playerContainer: null,
 	playerContent: null,
@@ -565,10 +565,7 @@ function registerPlayer( type, object ) {
 			/*
 				Embed Player Object
 			*/
-			var player = new Twitch.Player("player", {
-				height: "100%",
-				width: "100%"
-			});
+			var player;
 
 			/*
 				Standard Player Methods
@@ -577,6 +574,34 @@ function registerPlayer( type, object ) {
 				this.lastStartTime = null;
 				this.lastVideoId = null;
 				this.videoId = id;
+
+				if (player) { return; }
+
+				var twitchOptions = {
+					height: "100%",
+					width: "100%"
+				};
+
+				if (this.videoId.startsWith("vod,")) {
+					twitchOptions["video"] = "v" + this.videoId.split(",")[1];
+				} else {
+					twitchOptions["channel"] = this.videoId;
+				}
+
+				player = new Twitch.Player("player", twitchOptions);
+
+				//player.addEventListener("Twitch.Player.READY", this.onReady);
+				this.onReady();
+
+				// Apparently you have to do this for it to play reliably
+				var self = this;
+				setTimeout(function() {
+					self.player.pause();
+					self.player.play();
+
+					self.player.setVolume( (this.volume != null ? this.volume : theater.volume != null ? theater.volume : 25) / 100 );
+					self.player.setMuted( (this.volume != null ? this.volume : theater.volume != null ? theater.volume : 25) == 0 );
+				}, 5000);
 			};
 
 			this.setVolume = function( volume ) {
@@ -652,16 +677,6 @@ function registerPlayer( type, object ) {
 
 						this.lastVideoId = this.videoId;
 						this.lastStartTime = this.startTime;
-
-						// Apparently you have to do this for it to play reliably
-						var self = this;
-						setTimeout(function() {
-							self.player.pause();
-							self.player.play();
-
-							self.player.setVolume( (this.volume != null ? this.volume : theater.volume != null ? theater.volume : 25) / 100 );
-							self.player.setMuted( (this.volume != null ? this.volume : theater.volume != null ? theater.volume : 25) == 0 );
-						}, 5000)
 					}
 
 					if ( this.volume != this.lastVolume ) {
@@ -686,9 +701,6 @@ function registerPlayer( type, object ) {
 				this.player = player;
 				this.interval = setInterval( this.think.bind(this), 100 );
 			};
-
-			//player.addEventListener("Twitch.Player.READY", this.onReady);
-			this.onReady();
 		} else {
 			theater.playerLoadFailure();
 		}
