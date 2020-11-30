@@ -1,12 +1,42 @@
-{"info":[
-	{"id":"winter", "title":"WinterPhoenix - Movie Night", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"},
-	{"id":"sophie", "title":"Sophie-bear - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"},
-	{"id":"liquidus", "title":"Liquidus - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"},
-	{"id":"nighthawk", "title":"Nighthawk - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"},
-	{"id":"salty", "title":"salty bird - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/salty.jpg"},
-	{"id":"pickle", "title":"Pickle - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"},
-	{"id":"funk", "title":"Funkmasterg4 - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"},
-	{"id":"weiss", "title":"Weiss - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"},
-	{"id":"kuro", "title":"Kuro Usagi - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"},
-	{"id":"rei", "title":"Rei - Stream", "live":true, "thumbnail":"https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"}
-]}
+{
+	"winter": {
+		"title": "WinterPhoenix - Movie Night",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"
+	},
+	"sophie": {
+		"title": "Sophie-bear",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"
+	},
+	"liquidus": {
+		"title": "Liquidus",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"
+	},
+	"nighthawk": {
+		"title": "Nighthawk",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"
+	},
+	"salty": {
+		"title": "salty bird",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/rtmp/thumbnails/salty.jpg"
+	},
+	"weiss": {
+		"title": "Weiss",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"
+	},
+	"kuro": {
+		"title": "Kuro Usagi",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"
+	},
+	"rei": {
+		"title": "Rei",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/rtmp/thumbnails/default.png"
+	}
+}
