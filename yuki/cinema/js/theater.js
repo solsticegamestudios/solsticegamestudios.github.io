@@ -999,7 +999,7 @@ function registerPlayer( type, object ) {
 						case Hls.ErrorTypes.NETWORK_ERROR:
 							if (data.details == Hls.ErrorDetails.MANIFEST_LOAD_ERROR || data.details == Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) {
 								console.error("Fatal HLS Error (Unrecoverable, Retrying...): " + data.details);
-								self.player.loadSource("https://rtmp-hls.yukitheater.org/" + self.videoId + "/master.m3u8");
+								hlsHandler.loadSource("https://rtmp-hls.yukitheater.org/" + self.videoId + "/master.m3u8");
 							} else {
 								console.warn("Fatal HLS Error (Retrying): " + data.details);
 								hlsHandler.startLoad();
@@ -1011,7 +1011,7 @@ function registerPlayer( type, object ) {
 							break;
 						default:
 							console.error("Fatal HLS Error (Unrecoverable, Retrying...): " + data.details);
-							self.player.loadSource("https://rtmp-hls.yukitheater.org/" + self.videoId + "/master.m3u8");
+							hlsHandler.loadSource("https://rtmp-hls.yukitheater.org/" + self.videoId + "/master.m3u8");
 							break;
 					}
 				} else {
