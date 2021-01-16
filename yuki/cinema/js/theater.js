@@ -10,7 +10,7 @@ if (!String.prototype.startsWith) {
 
 var theater = {
 
-	VERSION: "3.1.1-YukiTheater",
+	VERSION: "3.1.2-YukiTheater",
 
 	playerContainer: null,
 	playerContent: null,
@@ -947,8 +947,19 @@ function registerPlayer( type, object ) {
 			player_container.removeChild(document.getElementById('player'));
 			player_container.appendChild(pre_player);
 
-			var hls = new Hls();
-			hls.attachMedia(pre_player);
+			var hlsHandler = new Hls();
+			hlsHandler.attachMedia(pre_player);
+
+			/*
+				Standard Player Methods
+			*/
+			this.setVideo = function( id ) {
+				this.lastStartTime = null;
+				this.lastVideoId = null;
+				this.videoId = id;
+
+				hlsHandler.loadSource("https://rtmp-hls.yukitheater.org/" + this.videoId + "/master.m3u8");
+			};
 
 			/*
 				Player Specific Methods
@@ -956,21 +967,7 @@ function registerPlayer( type, object ) {
 			this.think = function() {
 				if (this.player != null) {
 					if (this.videoId != this.lastVideoId) {
-						this.player.loadSource("https://rtmp-hls.yukitheater.org/hls/" + this.videoId + ".m3u8");
 						this.lastVideoId = this.videoId;
-						this.lastSrcChange = Math.round(Date.now()/1000) + 5; // Wait 5 seconds and then try again if it isn't working
-					}
-
-					if (this.lastSrcChange != undefined) {
-						var curTime = Math.round(Date.now()/1000);
-						if (curTime >= this.lastSrcChange) {
-							if (this.player.currentLevel === -1) {
-								console.log("Attempt to load RTMP Stream Failed! Retrying...");
-								this.player.loadSource("https://rtmp-hls.yukitheater.org/hls/" + this.videoId + ".m3u8");
-							}
-
-							this.lastSrcChange = Math.round(Date.now()/1000) + 5;
-						}
 					}
 
 					if (this.volume != this.lastVolume) {
@@ -981,7 +978,7 @@ function registerPlayer( type, object ) {
 			};
 
 			this.onReady = function() {
-				this.player = hls;
+				this.player = hlsHandler;
 				pre_player.play();
 
 				var self = this;
@@ -993,11 +990,34 @@ function registerPlayer( type, object ) {
 			};
 
 			var self = this;
-			hls.on(Hls.Events.MEDIA_ATTACHED, function() {
+			hlsHandler.on(Hls.Events.MANIFEST_PARSED, function() {
 				self.onReady();
 			});
-			hls.on(Hls.Events.ERROR, function(event, data) {
-				//theater.playerLoadFailure();
+			hlsHandler.on(Hls.Events.ERROR, function (event, data) {
+				if (data.fatal) {
+					switch(data.type) {
+						case Hls.ErrorTypes.NETWORK_ERROR:
+							if (data.details == Hls.ErrorDetails.MANIFEST_LOAD_ERROR || data.details == Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) {
+								console.error("Fatal HLS Error (Unrecoverable, Retrying...): " + data.details);
+								self.player.loadSource("https://rtmp-hls.yukitheater.org/" + self.videoId + "/master.m3u8");
+							} else {
+								console.warn("Fatal HLS Error (Retrying): " + data.details);
+								hlsHandler.startLoad();
+							}
+							break;
+						case Hls.ErrorTypes.MEDIA_ERROR:
+							console.warn("Fatal HLS Error (Retrying): " + data.details);
+							hlsHandler.recoverMediaError();
+							break;
+						default:
+							console.error("Fatal HLS Error (Unrecoverable, Retrying...): " + data.details);
+							self.player.loadSource("https://rtmp-hls.yukitheater.org/" + self.videoId + "/master.m3u8");
+							break;
+					}
+				} else {
+					//hlsHandler.recoverMediaError();
+					console.log("Non-Fatal HLS Error: " + data.details);
+				}
 			});
 		} else {
 			theater.playerLoadFailure();
