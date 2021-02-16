@@ -133,11 +133,11 @@ a {
 	animation-play-state: running;
 }
 
-.service:hover > .service-front {
+.service:hover > .service-front, .service:focus-within > .service-front {
 	transform: rotateY(180deg);
 }
 
-.service:hover > .service-back {
+.service:hover > .service-back, .service:focus-within > .service-back {
 	transform: rotateY(0deg);
 }
 
@@ -149,7 +149,7 @@ a {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-image: url(img/card-back.png);
+	background-image: url(img/card.png);
 	background-position: 50%;
 	background-size: 100%;
 	transition: transform 0.5s;
