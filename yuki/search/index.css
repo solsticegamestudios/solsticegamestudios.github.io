@@ -1,0 +1,184 @@
+@font-face {
+	font-family: "Personified UX";
+	src: url(font/personified-ux.ttf);
+}
+
+/* BUG: Chromium will make the cards blurry as hell if we don't do this */
+/* GO BIG MODE */
+@keyframes supersample-hack {
+	from {
+		transform: scale(1.25);
+	}
+	to {
+		transform: scale(1);
+	}
+}
+
+html, body {
+	background-color: #000;
+	margin: 0;
+	overflow: hidden;
+	width: 100vw;
+	height: 100vh;
+	font-family: "Personified UX", sans-serif;
+	color: #FFF;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	animation: 1ms step-end 0s 1 forwards supersample-hack;
+	position: relative;
+}
+
+#knife-sound {
+	display: none;
+}
+
+@keyframes knife-wiggle {
+	0% {
+		transform: rotateZ(-45deg);
+	}
+	20% {
+		transform: rotateZ(-47deg);
+	}
+	40% {
+		transform: rotateZ(-43deg);
+	}
+	60% {
+		transform: rotateZ(-46deg);
+	}
+	80% {
+		transform: rotateZ(-44deg);
+	}
+	100% {
+		transform: rotateZ(-45deg);
+	}
+}
+
+#knife {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	transform: rotateZ(-45deg);
+	transform-origin: 0% 50%;
+	clip-path: polygon(16px 0%, 100% 0%, 100% 100%, 16px 100%);
+	pointer-events: none;
+}
+
+h1 {
+	display: flex;
+	white-space: pre;
+}
+
+#services {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+a {
+	color: #FFF;
+	text-decoration: none;
+}
+
+@keyframes card-hover {
+	0% {
+		transform: rotateZ(10deg);
+	}
+	50% {
+		transform: rotateZ(12deg) scale(1.02);
+	}
+	100% {
+		transform: rotateZ(10deg);
+	}
+}
+
+@keyframes card-stabbed {
+	0% {
+		transform: rotateZ(10deg) translate3d(0, 0, 0);
+	}
+	20% {
+		transform: rotateZ(10deg) translate3d(-1%, 0, 0);
+	}
+	40% {
+		transform: rotateZ(10deg) translate3d(1%, 0, 0);
+	}
+	60% {
+		transform: rotateZ(10deg) translate3d(-0.5%, 0, 0);
+	}
+	80% {
+		transform: rotateZ(10deg) translate3d(0.5%, 0, 0);
+	}
+	100% {
+		transform: rotateZ(10deg) translate3d(0, 0, 0);
+	}
+}
+
+.service {
+	position: relative;
+	width: 192px;
+	height: 128px;
+	margin: 32px 24px;
+	font-size: 22px;
+	transform: rotateZ(10deg);
+	will-change: transform;
+	animation: 2s ease-in-out 0.25s infinite forwards card-hover;
+	animation-play-state: paused;
+	user-select: none;
+}
+
+.service:hover {
+	animation-play-state: running;
+}
+
+.service:hover > .service-front {
+	transform: rotateY(180deg);
+}
+
+.service:hover > .service-back {
+	transform: rotateY(0deg);
+}
+
+.service > .service-front, .service > .service-back {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	backface-visibility: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-image: url(img/card-back.png);
+	background-position: 50%;
+	background-size: 100%;
+	transition: transform 0.5s;
+	will-change: transform;
+}
+
+.service > .service-back {
+	transform: rotateY(180deg);
+	display: flex;
+	flex-direction: column;
+}
+
+.service > .service-back > div {
+	display: flex;
+	margin: 8px 0;
+	white-space: pre;
+}
+
+.service > .service-back > div > span {
+	margin: 0 1px;
+	padding: 0 2px;
+}
+
+h1 .ransom-letter {
+	background-color: #FFF;
+	color: #000;
+}
+
+.service .ransom-letter {
+	background-color: #000;
+	color: #FFF;
+}

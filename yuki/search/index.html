@@ -1,131 +1,235 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 	<head>
-		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<title>YukiTheater - Video Search</title>
-		<link href="style.css" rel="stylesheet" type="text/css">
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Media Search | YukiTheater: GMod's Anime Theater</title>
+
+		<link href="index.css" rel="stylesheet">
 	</head>
 	<body>
-		<div style="position:absolute;top:0;left:0;right:0;bottom:0;">
-			<section id="content-container">
-				<h1>Share a video from one of our services</h1>
+		<audio id="knife-sound" src="sound/knife-stab.wav"></audio>
+		<img id="knife" src="img/knife.png">
 
-				<div style="text-align:center;font-size:0;">
+		<h1>
+			<span>C</span>
+			<span>h</span>
+			<span>o</span>
+			<span>o</span>
+			<span>s</span>
+			<span>e</span>
+			<span class="whitespace"> </span>
+			<span>M</span>
+			<span>e</span>
+			<span>d</span>
+			<span>i</span>
+			<span>a</span>
+			<span class="whitespace"> </span>
+			<span>f</span>
+			<span>r</span>
+			<span>o</span>
+			<span>m</span>
+			<span class="whitespace"> </span>
+			<span>o</span>
+			<span>n</span>
+			<span>e</span>
+			<span class="whitespace"> </span>
+			<span>o</span>
+			<span>f</span>
+			<span class="whitespace"> </span>
+			<span>o</span>
+			<span>u</span>
+			<span>r</span>
+			<span class="whitespace"> </span>
+			<span>S</span>
+			<span>u</span>
+			<span>p</span>
+			<span>p</span>
+			<span>o</span>
+			<span>r</span>
+			<span>t</span>
+			<span>e</span>
+			<span>d</span>
+			<span class="whitespace"> </span>
+			<span>S</span>
+			<span>e</span>
+			<span>r</span>
+			<span>v</span>
+			<span>i</span>
+			<span>c</span>
+			<span>e</span>
+			<span>s</span>
+		</h1>
 
-					<service class="subtext" style="background-image:url(logos/youtube.png);" onclick="selectService('YouTube','https://www.youtube.com/');" onmouseover="hoverService();">YouTube</service>
-
-					<service id="twitch" class="subtext" style="background-image:url(logos/twitch.png);" onclick="selectService('Twitch','https://twitch.tv/');" onmouseover="hoverService();">Twitch</service>
-
-					<service class="highlight" style="background-image:url(logos/netflix.png);" onclick="selectService('Netflix','https://www.netflix.com/');" onmouseover="hoverService();">Netflix (Must Sign In)</service>
-
-					<service class="highlight" style="background-image:url(logos/hulu.png);" onclick="selectService('Hulu','https://www.hulu.com/');" onmouseover="hoverService();">Hulu (Must Sign In)</service>
-
-					<service id="vimeo" class="subtext" style="background-image:url(logos/vimeo.png);" onclick="selectService('Vimeo','https://vimeo.com/');" onmouseover="hoverService();">Vimeo</service>
-
-					<br />
-
-					<service class="subtext" style="background-image:url(logos/animetwist.png);" onclick="selectService('AnimeTwist','https://twist.moe/');" onmouseover="hoverService();">Anime Twist</service>
-
-					<service class="subtext" style="background-image:url(logos/animekisa.png);" onclick="selectService('AnimeKisa','https://animekisa.tv/');" onmouseover="hoverService();">AnimeKisa</service>
-
-					<service style="background-image:url(logos/gogoanime.png);" onclick="selectService('GoGoAnime','https://gogoanime.io/');" onmouseover="hoverService();">-</service>
-
-					<br />
-
-					<service class="subtext" style="background-image:url(logos/reddit.png);" onclick="selectService('reddit/videos','https://www.reddit.com/r/videos/');" onmouseover="hoverService();">Videos</service>
-
-					<service class="subtext" style="background-image:url(logos/reddit.png);" onclick="selectService('reddit/fullmoviesonyoutube','https://www.reddit.com/r/fullmoviesonyoutube/');" onmouseover="hoverService();">FullMoviesOnYouTube</service>
-
+		<div id="services">
+			<a class="service" href="https://www.youtube.com" draggable="false">
+				<div class="service-front">
+					<img src="img/services/youtube.png">
 				</div>
-
-				<div id="tip" class="notice"></div>
-
-			</section>
+				<div class="service-back">
+					<div>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="whitespace"> </span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">o</span>
+					</div>
+					<div>
+						<span class="ransom-letter">Y</span>
+						<span class="ransom-letter">o</span>
+						<span class="ransom-letter">u</span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">u</span>
+						<span class="ransom-letter">b</span>
+						<span class="ransom-letter">e</span>
+					</div>
+				</div>
+			</a>
+			<a class="service" href="https://twitch.tv" draggable="false">
+				<div class="service-front">
+					<img src="img/services/twitch.png">
+				</div>
+				<div class="service-back">
+					<div>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="whitespace"> </span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">o</span>
+					</div>
+					<div>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">w</span>
+						<span class="ransom-letter">i</span>
+						<span class="ransom-letter">t</span>
+						<span class="ransom-letter">c</span>
+						<span class="ransom-letter">h</span>
+					</div>
+				</div>
+			</a>
+			<a class="service" href="https://www.netflix.com" draggable="false">
+				<div class="service-front">
+					<img src="img/services/netflix.png">
+				</div>
+				<div class="service-back">
+					<div>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="whitespace"> </span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">o</span>
+					</div>
+					<div>
+						<span class="ransom-letter">N</span>
+						<span class="ransom-letter">e</span>
+						<span class="ransom-letter">t</span>
+						<span class="ransom-letter">f</span>
+						<span class="ransom-letter">l</span>
+						<span class="ransom-letter">i</span>
+						<span class="ransom-letter">x</span>
+					</div>
+				</div>
+			</a>
+			<a class="service" href="https://www.hulu.com" draggable="false">
+				<div class="service-front">
+					<img src="img/services/hulu.png">
+				</div>
+				<div class="service-back">
+					<div>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="whitespace"> </span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">o</span>
+					</div>
+					<div>
+						<span class="ransom-letter">H</span>
+						<span class="ransom-letter">u</span>
+						<span class="ransom-letter">l</span>
+						<span class="ransom-letter">u</span>
+					</div>
+				</div>
+			</a>
+			<a class="service" href="https://twist.moe" draggable="false">
+				<div class="service-front">
+					<img src="img/services/animetwist.png">
+				</div>
+				<div class="service-back">
+					<div>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="whitespace"> </span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">o</span>
+					</div>
+					<div>
+						<span class="ransom-letter">A</span>
+						<span class="ransom-letter">n</span>
+						<span class="ransom-letter">i</span>
+						<span class="ransom-letter">m</span>
+						<span class="ransom-letter">e</span>
+						<span class="whitespace"> </span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">w</span>
+						<span class="ransom-letter">i</span>
+						<span class="ransom-letter">s</span>
+						<span class="ransom-letter">t</span>
+					</div>
+				</div>
+			</a>
+			<a class="service" href="https://animekisa.tv" draggable="false">
+				<div class="service-front">
+					<img src="img/services/animekisa.png">
+				</div>
+				<div class="service-back">
+					<div>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="whitespace"> </span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">o</span>
+					</div>
+					<div>
+						<span class="ransom-letter">A</span>
+						<span class="ransom-letter">n</span>
+						<span class="ransom-letter">i</span>
+						<span class="ransom-letter">m</span>
+						<span class="ransom-letter">e</span>
+						<span class="ransom-letter">K</span>
+						<span class="ransom-letter">i</span>
+						<span class="ransom-letter">s</span>
+						<span class="ransom-letter">a</span>
+					</div>
+				</div>
+			</a>
+			<a class="service" href="https://gogoanime.sh" draggable="false">
+				<div class="service-front">
+					<img src="img/services/gogoanime.png">
+				</div>
+				<div class="service-back">
+					<div>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="whitespace"> </span>
+						<span class="ransom-letter">T</span>
+						<span class="ransom-letter">o</span>
+					</div>
+					<div>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="ransom-letter">G</span>
+						<span class="ransom-letter">o</span>
+						<span class="ransom-letter">A</span>
+						<span class="ransom-letter">n</span>
+						<span class="ransom-letter">i</span>
+						<span class="ransom-letter">m</span>
+						<span class="ransom-letter">e</span>
+					</div>
+				</div>
+			</a>
 		</div>
 
-		<script type="text/javascript">
-			// Navigation sounds
-			var hoverSound = new Audio('sounds/00.wav');
-			var selectSound = new Audio('sounds/05.wav');
-
-			// Event called when a service is hovered
-			function hoverService() {
-				hoverSound.play();
-				hoverSound.currentTime = 0;
-			}
-
-			// Event called when a service is selected
-			function selectService(name, url) {
-				selectSound.play();
-				
-				ga('send', 'event', 'services', 'visit', name);
-				setTimeout(function(){
-					window.location.href = url;
-				}, 800);
-			}
-
-			document.addEventListener('DOMContentLoaded', function() {
-				// Hide Twitch and Vimeo options if running Awesomium, as they're not supported there
-				if (navigator.userAgent.indexOf("Awesomium") != -1) {
-					document.getElementById("twitch").style.display = "none";
-					document.getElementById("vimeo").style.display = "none";
-				}
-
-				// Set a random tip on DOM load
-				var tips = [
-					'Did you know that YukiTheater is a fork of the open-source Cinema gamemode?<br /><a href="https://github.com/pixeltailgames/cinema">View Cinema\'s code on GitHub</a>',
-					'Need Help?<br />Check out the <a href="https://www.yukitheater.org/theater/help.html">Help Page</a>, <a href="https://www.solsticegamestudios.com/forums/forums/support/">Help and Support Board</a> on our Forums, or <a href="https://steamcommunity.com/workshop/filedetails/discussion/118824086/828935672624191282/">Cinema FAQ</a>.',
-					'Have a Feature Request for YukiTheater?<br /><a href="https://www.solsticegamestudios.com/forums/forums/yukitheater-suggestions/">Post a Suggestion</a>',
-					'Did you know that YukiTheater is entirely community-supported?<br />Please consider <a href="https://www.solsticegamestudios.com/donate.php">Donating</a> if you like our work!',
-					'YukiTheater is on social networks too!<br /><a href="https://steamcommunity.com/groups/YukiTheaterPublic">Steam Group</a>, <a href="https://twitter.com/SolsticeGMod">Twitter</a>, <a href="https://www.facebook.com/SolsticeGameStudios/">Facebook Page</a>',
-					'Found a Bug?<br /><a href="https://www.solsticegamestudios.com/forums/forums/yukitheater-bugs/">Report it on the Forums<a/>',
-					'Want to keep up with YukiTheater\'s Development?<br /><a href="https://trello.com/b/TtHsb6mn/yukitheater-project">Check out the Trello</a>',
-					'Need to contact a Staff Member?<br /><a href="https://www.solsticegamestudios.com/forums/members/?type=staff">View the Current Staff List</a>',
-				];
-
-				return function() {
-					var node = document.getElementById('tip'),
-						tip = tips[Math.floor(Math.random() * tips.length)];
-
-					node.innerHTML = tip;
-				};
-			}());
-
-			/* Grab KissProxy Statuses and display them
-			var serviceAPIMatch = {
-				"kissanime": "m776892256-4c8c726cf402855cb155efc6",
-				"kissasian": "m777082583-d9ffe7f8ac9aa457bbfdfbd1",
-				"kisscartoon": "m777082588-d5a130d00fb71e067070740a"
-			}
-
-			for (var serviceName in serviceAPIMatch) {
-				var serviceAPIKey = serviceAPIMatch[serviceName];
-
-				var uptimeRobotJSON = new XMLHttpRequest();
-				uptimeRobotJSON.serviceName = serviceName;
-				uptimeRobotJSON.onreadystatechange = function() {
-					if (this.readyState == 4 && this.status == 200) {
-						var parsedJSON = JSON.parse(this.responseText);
-
-						var monitorDiv = document.getElementById(this.serviceName + "Monitor");
-						monitorDiv.innerHTML = parsedJSON["monitors"]["monitor"][0]["status"] == 2 ? "Proxy Online" : (parsedJSON["monitors"]["monitor"][0]["status"] == 8 || parsedJSON["monitors"]["monitor"][0]["status"] == 9) ? "Proxy Offline" : "Proxy Unknown";
-						monitorDiv.className = parsedJSON["monitors"]["monitor"][0]["status"] == 2 ? "monitorUp" : (parsedJSON["monitors"]["monitor"][0]["status"] == 8 || parsedJSON["monitors"]["monitor"][0]["status"] == 9) ? "monitorDown" : "monitorUnknown";
-					}
-				}
-				uptimeRobotJSON.open("GET", "https://api.uptimerobot.com/getMonitors?apiKey=" + serviceAPIKey + "&format=json&noJsonCallback=1");
-				uptimeRobotJSON.send();
-			}
-			*/
-		</script>
-
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-			ga('create', 'UA-39404760-2', 'auto');
-			ga('send', 'pageview');
-		</script>
+		<script src="index.js"></script>
 	</body>
 </html>
