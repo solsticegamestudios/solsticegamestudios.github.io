@@ -29,13 +29,14 @@ function ransomizeSpans(containerElem, numToCutOut) {
 
 // https://stackoverflow.com/a/59575227
 var dynamicStyleSheet = null;
+var knifeStabAnimIndex = null;
 function addRuleToDynamicStyleSheet(ruleText) {
 	if (!dynamicStyleSheet) {
 		dynamicStyleSheet = document.createElement("style");
 		document.head.appendChild(dynamicStyleSheet);
 	}
 
-	dynamicStyleSheet.sheet.insertRule(ruleText, dynamicStyleSheet.length);
+	knifeStabAnimIndex = dynamicStyleSheet.sheet.insertRule(ruleText, dynamicStyleSheet.length);
 }
 
 const knifeSoundElem = document.getElementById("knife-sound");
@@ -87,6 +88,10 @@ for (serviceElem of serviceElems) {
 		}, knifeSoundElem.duration * 800);
 
 		function knifeStabEnd() {
+			// Reset the knife-stab animation
+			dynamicStyleSheet.sheet.deleteRule(knifeStabAnimIndex);
+			knifeStabAnimIndex = null;
+
 			thisServiceElem.style.animation = "250ms linear 0s 1 forwards card-stabbed";
 
 			knifeElem.style.left = endXStr;
