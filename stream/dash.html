@@ -1,0 +1,85 @@
+<html>
+	<head>
+		<script src="http://cdn.dashjs.org/latest/dash.all.min.js" type="text/javascript"></script>
+	</head>
+	<body style="margin: 0;">
+		<video id="player" width="100%" height="100%" autoplay controls></video>
+		<script>
+			var exMedia = {};
+			exMedia.onPlayerReady = function() { console.log("ready"); }
+			exMedia.onPlayerError = console.log;
+
+			var player = document.getElementById("player");
+			var dashHandler;
+			var media = {
+				maxSyncDiff: 3,
+				setMaxSyncDiff: function(maxSyncDiff) {
+					this.maxSyncDiff = maxSyncDiff;
+				},
+				setInternalResolution: function(internalRes) {
+					// TODO: dashHandler.setQualityFor + dashHandler.setAutoSwitchQualityFor (the latter doesn't exist anymore???)
+
+					/*
+					if (this.internalResolution != internalRes && player.readyState > 1) {
+						var newLevel = -1;
+						if (internalRes != "auto") {
+							for (let levelIndex = 0; levelIndex < hlsHandler.levels.length; levelIndex++) {
+								const level = hlsHandler.levels[levelIndex];
+								if (level.name == internalRes) {
+									newLevel = levelIndex;
+									break;
+								}
+							}
+						}
+						hlsHandler.autoLevelEnabled = newLevel == -1 ? true : false;
+						hlsHandler.currentLevel = newLevel;
+						this.internalResolution = internalRes;
+						console.log("Setting Player Internal Resolution: " + internalRes);
+					}
+					*/
+				},
+				syncTime: function() {
+					if (player.readyState == 1 || (player.readyState > 0 && player.paused)) {
+						player.play();
+					}
+				}
+			};
+
+			dashHandler = dashjs.MediaPlayer().create();
+			dashHandler.initialize(player, "https://rtmp-hls.yukitheater.org/winter/playlist.mpd", true);
+			dashHandler.on(dashjs.MediaPlayer.events.MANIFEST_LOADED, function() {
+				exMedia.onPlayerReady();
+			});
+			dashHandler.on(dashjs.MediaPlayer.events.ERROR, function(event) {
+				exMedia.onPlayerError("DASH Error: [Code " + event.error.code + "] " + event.error.message);
+			});
+
+			dashHandler.on(dashjs.MediaPlayer.events.PLAYBACK_ERROR, function(event) {
+				console.log(event);
+
+				if (data.fatal) {
+					switch(data.type) {
+						case Hls.ErrorTypes.NETWORK_ERROR:
+							if (data.details == Hls.ErrorDetails.MANIFEST_LOAD_ERROR || data.details == Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) {
+								exMedia.onPlayerError("Fatal HLS Error (Unrecoverable): " + data.details);
+							} else {
+								console.warn("Fatal HLS Error (Retrying): " + data.details);
+								hlsHandler.startLoad();
+							}
+							break;
+						case Hls.ErrorTypes.MEDIA_ERROR:
+							console.warn("Fatal HLS Error (Retrying): " + data.details);
+							hlsHandler.recoverMediaError();
+							break;
+						default:
+							exMedia.onPlayerError("Fatal HLS Error (Unrecoverable): " + data.details);
+							break;
+					}
+				} else {
+					//hlsHandler.recoverMediaError();
+					console.log("Non-Fatal HLS Error: " + data.details);
+				}
+			});
+		</script>
+	</body>
+</html>
