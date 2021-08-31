@@ -7,12 +7,18 @@
 		<video id="player" width="100%" height="100%" autoplay controls></video>
 
 		<script>
+			const url = new URL(window.location.href);
+
 			var exMedia = {};
 			exMedia.onPlayerError = console.error;
-			exMedia.onPlayerReady = function() { console.log("ready"); };
+			exMedia.onPlayerReady = function() {
+				console.log("ready");
+				document.getElementsByTagName("video")[0].play();
+			};
 
 			var player = document.getElementById("player");
 			var hlsHandler;
+			var sourceURL = "https://rtmp-hls.yukitheater.org/" + url.searchParams.get("user") + "/master.m3u8";
 
 			var media = {
 				maxSyncDiff: 3,
@@ -51,8 +57,11 @@
 				const url = new URL(window.location.href);
 
 				if (url.searchParams.get("user")) {
+					// 3 fragments * 2 seconds = 6 seconds
+					Hls.DefaultConfig.liveSyncDurationCount = 3;
+
 					hlsHandler = new Hls();
-					hlsHandler.loadSource("https://rtmp-hls.yukitheater.org/" + url.searchParams.get("user") + "/master.m3u8");
+					hlsHandler.loadSource(sourceURL);
 					hlsHandler.attachMedia(player);
 
 					hlsHandler.on(Hls.Events.MANIFEST_PARSED, function() {
@@ -64,6 +73,7 @@
 								case Hls.ErrorTypes.NETWORK_ERROR:
 									if (data.details == Hls.ErrorDetails.MANIFEST_LOAD_ERROR || data.details == Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) {
 										exMedia.onPlayerError("Fatal HLS Error (Unrecoverable): " + data.details);
+										hlsHandler.loadSource(sourceURL);
 									} else {
 										console.warn("Fatal HLS Error (Retrying): " + data.details);
 										hlsHandler.startLoad();
@@ -75,6 +85,7 @@
 									break;
 								default:
 									exMedia.onPlayerError("Fatal HLS Error (Unrecoverable): " + data.details);
+									hlsHandler.loadSource(sourceURL);
 									break;
 							}
 						} else {
