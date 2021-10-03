@@ -9,11 +9,6 @@
 		"live": true,
 		"thumbnail": "https://solsticegamestudios.github.io/stream/thumbnails/default.png"
 	},
-	"liquidus": {
-		"title": "Liquidus",
-		"live": true,
-		"thumbnail": "https://solsticegamestudios.github.io/stream/thumbnails/default.png"
-	},
 	"nighthawk": {
 		"title": "Nighthawk",
 		"live": true,
@@ -24,18 +19,13 @@
 		"live": true,
 		"thumbnail": "https://solsticegamestudios.github.io/stream/thumbnails/salty.jpg"
 	},
-	"weiss": {
-		"title": "Weiss",
-		"live": true,
-		"thumbnail": "https://solsticegamestudios.github.io/stream/thumbnails/default.png"
-	},
-	"kuro": {
-		"title": "Kuro Usagi",
-		"live": true,
-		"thumbnail": "https://solsticegamestudios.github.io/stream/thumbnails/default.png"
-	},
 	"rei": {
 		"title": "Rei",
+		"live": true,
+		"thumbnail": "https://solsticegamestudios.github.io/stream/thumbnails/default.png"
+	},
+	"momo": {
+		"title": "Momo",
 		"live": true,
 		"thumbnail": "https://solsticegamestudios.github.io/stream/thumbnails/default.png"
 	}
