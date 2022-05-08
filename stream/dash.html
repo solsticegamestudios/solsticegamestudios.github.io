@@ -1,13 +1,16 @@
 <html>
 	<head>
+		<title>Solstream: DASH</title>
 		<script src="http://cdn.dashjs.org/latest/dash.all.min.js" type="text/javascript"></script>
 	</head>
 	<body style="margin: 0;">
 		<video id="player" width="100%" height="100%" autoplay controls></video>
 		<script>
+			const url = new URL(window.location.href);
+
 			var exMedia = {};
 			exMedia.onPlayerReady = function() { console.log("ready"); }
-			exMedia.onPlayerError = console.log;
+			exMedia.onPlayerError = console.error;
 
 			var player = document.getElementById("player");
 			var dashHandler;
@@ -46,7 +49,26 @@
 			};
 
 			dashHandler = dashjs.MediaPlayer().create();
-			dashHandler.initialize(player, "https://rtmp-hls.yukitheater.org/winter/playlist.mpd", true);
+			dashHandler.updateSettings({
+				debug: {
+					logLevel: dashjs.Debug.LOG_LEVEL_DEBUG,
+				},
+				streaming: {
+					lowLatencyEnabled: true,
+					delay: {
+						// 3 fragments * 2 seconds = 6 seconds
+						liveDelayFragmentCount: 3
+					},
+					liveCatchup: {
+						minDrift: 0.02,
+						maxDrift: 0,
+						playbackRate: 0.5,
+						latencyThreshold: 10
+					}
+				}
+			});
+			dashHandler.initialize(player, "https://stream.solsticegamestudios.com/" + url.searchParams.get("user") + "/playlist.mpd", true);
+
 			dashHandler.on(dashjs.MediaPlayer.events.MANIFEST_LOADED, function() {
 				exMedia.onPlayerReady();
 			});
@@ -57,7 +79,7 @@
 			dashHandler.on(dashjs.MediaPlayer.events.PLAYBACK_ERROR, function(event) {
 				console.log(event);
 
-				if (data.fatal) {
+				/*if (data.fatal) {
 					switch(data.type) {
 						case Hls.ErrorTypes.NETWORK_ERROR:
 							if (data.details == Hls.ErrorDetails.MANIFEST_LOAD_ERROR || data.details == Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT) {
@@ -78,7 +100,7 @@
 				} else {
 					//hlsHandler.recoverMediaError();
 					console.log("Non-Fatal HLS Error: " + data.details);
-				}
+				}*/
 			});
 		</script>
 	</body>
