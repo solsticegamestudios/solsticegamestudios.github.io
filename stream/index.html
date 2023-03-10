@@ -22,19 +22,46 @@
 
 			var media = {
 				maxSyncDiff: 3,
+				paused: false,
 				setMaxSyncDiff: function(maxSyncDiff) {
 					this.maxSyncDiff = maxSyncDiff;
 				},
 				setInternalResolution: function(internalRes) {
 					if (this.internalResolution != internalRes && player.readyState > 1) {
+						var newHeight = -1;
 						var newLevel = -1;
 
 						if (internalRes != "auto") {
+							const heightLevelMap = {};
+							const sortedHeights = [];
+
 							for (let levelIndex = 0; levelIndex < hlsHandler.levels.length; levelIndex++) {
 								const level = hlsHandler.levels[levelIndex];
-								if (level.name == internalRes) {
+								heightLevelMap[level.height] = levelIndex;
+								sortedHeights.push(level.height);
+
+								if (level.height == internalRes) {
+									newHeight = level.height;
 									newLevel = levelIndex;
 									break;
+								}
+							}
+
+							if (newLevel == -1) {
+								sortedHeights.sort(function(a, b) { return a - b; });
+
+								// Find the highest resolution capped by the one that was requested
+								for (const height of sortedHeights) {
+									if (height < internalRes) {
+										newHeight = height;
+										newLevel = heightLevelMap[height];
+									}
+								}
+
+								// If we're still auto, the smallest available resolution was bigger than what we specified, so just use that
+								if (newLevel == -1) {
+									newHeight = sortedHeights[0];
+									newLevel = heightLevelMap[newHeight];
 								}
 							}
 						}
@@ -43,7 +70,7 @@
 						hlsHandler.currentLevel = newLevel;
 
 						this.internalResolution = internalRes;
-						console.log("Setting Player Internal Resolution: " + internalRes);
+						console.log("Setting Player Internal Resolution: " + (newHeight != internalRes ? (newHeight + " (requested: " + internalRes + ")") : internalRes));
 					}
 				},
 				syncTime: function() {
@@ -66,6 +93,17 @@
 
 					hlsHandler.on(Hls.Events.MANIFEST_PARSED, function() {
 						exMedia.onPlayerReady();
+
+						// Force player to stay in sync with play state
+						setInterval(function() {
+							if (!player.paused && media.paused) {
+								player.pause();
+								console.log("Force-Pausing Player");
+							} else if (player.paused && !media.paused) {
+								player.play();
+								console.log("Force-Playing Player");
+							}
+						}, 250);
 					});
 					hlsHandler.on(Hls.Events.ERROR, function (event, data) {
 						if (data.fatal) {
@@ -89,6 +127,7 @@
 									break;
 							}
 						} else {
+							// TODO: Fix the stream getting stuck paused sometimes
 							//hlsHandler.recoverMediaError();
 							console.log("Non-Fatal HLS Error: " + data.details);
 						}
