@@ -14,7 +14,7 @@ function getTanDeg(deg) {
 function ransomizeSpans(containerElem, numToCutOut) {
 	var letterElems = Array.from(containerElem.querySelectorAll("span:not(.whitespace)"));
 
-	for (letterElem of letterElems) {
+	for (var letterElem of letterElems) {
 		letterElem.style.transform = "rotate(" + String(getRandomInt(-10, 10))  + "deg)";
 	}
 
@@ -43,8 +43,8 @@ const knifeSoundElem = document.getElementById("knife-sound");
 const knifeElem = document.getElementById("knife");
 const serviceElems = document.getElementsByClassName("service");
 
-for (serviceElem of serviceElems) {
-	ransomizeSpans(serviceElem, 0);
+for (var serviceElem of serviceElems) {
+	ransomizeSpans(serviceElem.querySelector(".service-back"), 0);
 
 	serviceElem.addEventListener("click", function(event) {
 		// Wait! Don't do the redirect immediately, we want the sound/animation to play
